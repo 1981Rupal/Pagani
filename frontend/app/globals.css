@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------- Raw palette ---------- */
+@theme {
+  /* Arte (day) */
+  --color-arte-page: #F3EEE3;   --color-arte-paper: #FBF8F1;  --color-arte-wash: #E8E1D3;
+  --color-arte-rule: #D9D1C1;   --color-arte-ink: #1B1A17;    --color-arte-sepia: #5E584D;
+  --color-arte-accent: #8A4B2A;
+
+  /* Scienza (night) */
+  --color-scienza-page: #0E0F10;  --color-scienza-panel: #1A1C1E; --color-scienza-stage: #121416;
+  --color-scienza-rule: #2C2F32;  --color-scienza-text: #ECEAE4;  --color-scienza-muted: #9A9C9F;
+  --color-scienza-metal: #C8CBCF; --color-scienza-accent: #B88A5A;
+
+  /* Type, layout, motion (corners: no rounded-* classes, except rounded-full on swatches and dots) */
+  --tracking-kicker: 0.2em;
+  --tracking-label: 0.14em;
+  --container-site: 1280px;
+  --ease-atelier: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ---------- Mode-aware tokens (follow .mode-arte / .mode-scienza) ---------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-panel: var(--panel);
+
+  --font-display: var(--font-bodoni), serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.mode-arte {
+  --bg: var(--color-arte-page);  --fg: var(--color-arte-ink);   --muted: var(--color-arte-sepia);
+  --rule: var(--color-arte-rule); --accent: var(--color-arte-accent); --on-accent: var(--color-arte-page);
+  --panel: var(--color-arte-paper);
+}
+.mode-scienza {
+  --bg: var(--color-scienza-page);  --fg: var(--color-scienza-text);   --muted: var(--color-scienza-muted);
+  --rule: var(--color-scienza-rule); --accent: var(--color-scienza-accent); --on-accent: var(--color-scienza-page);
+  --panel: var(--color-scienza-panel);
+}
+.mode-arte, .mode-scienza {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color 900ms var(--ease-atelier), color 900ms var(--ease-atelier);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+body { margin: 0; font-family: var(--font-sans); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }

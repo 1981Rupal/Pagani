@@ -1,0 +1,110 @@
+/* Collection + 3D experience styles. Plain CSS (not modules): the shared turbopack
+   rule in next.config.ts routes every *.css through the Tailwind loader, so CSS
+   modules don't resolve here. All classes are prefixed pc- to stay local by convention. */
+
+/* Sketch line draw-in on hover/focus: 1400ms ease-in-out (Design.md §6). */
+.pc-sketch .pc-line,
+.pc-sketch .pc-line-fine {
+  fill: none;
+  stroke: var(--color-scienza-metal);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  vector-effect: non-scaling-stroke;
+}
+.pc-sketch .pc-line-fine {
+  stroke: var(--color-scienza-muted);
+  stroke-width: 1;
+}
+.pc-sketch .pc-arch {
+  fill: var(--color-scienza-stage);
+  stroke: none;
+}
+.pc-sketch .pc-ground {
+  stroke: var(--color-scienza-rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.pc-card:hover .pc-line,
+.pc-card:focus-within .pc-line,
+.pc-card:hover .pc-line-fine,
+.pc-card:focus-within .pc-line-fine {
+  animation: pc-draw 1400ms ease-in-out both;
+}
+@keyframes pc-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+.pc-reveal {
+  animation: pc-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes pc-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-card:hover .pc-line,
+  .pc-card:focus-within .pc-line,
+  .pc-card:hover .pc-line-fine,
+  .pc-card:focus-within .pc-line-fine { animation: none; }
+  .pc-reveal { animation: pc-fade 200ms ease-out both; }
+}
+@keyframes pc-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Story panel entrance: fade + 16px rise (Design.md §6 reveal). */
+.pc-panel-rise {
+  animation: pc-rise-panel 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes pc-rise-panel {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pc-panel-rise { animation: pc-fade-panel 200ms ease-out both; }
+}
+@keyframes pc-fade-panel {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Engraved range: a 1px rule track, square bronze thumb. */
+.pc-range {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.pc-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--color-scienza-metal);
+}
+.pc-range::-moz-range-track {
+  height: 1px;
+  background: var(--color-scienza-metal);
+}
+.pc-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -7.5px;
+  background: var(--color-scienza-accent);
+  border: 0;
+  border-radius: 0;
+}
+.pc-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--color-scienza-accent);
+  border: 0;
+  border-radius: 0;
+}
+.pc-range:focus-visible {
+  outline: 1px solid var(--color-scienza-metal);
+  outline-offset: 4px;
+}
