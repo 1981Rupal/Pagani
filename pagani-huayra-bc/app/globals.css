@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #ffffff;
+  --color-ink: #111111;
+  --color-red: #cc0000;
+  --color-red-hot: #ff1a1a;
+  --color-steel: #666666;
+  --color-line: #e0e0e0;
+  --font-display: "Orbitron Variable", "Orbitron", system-ui, sans-serif;
+  --font-body: "Rajdhani", system-ui, sans-serif;
+}
+
+html { background: #fff; color: #111; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  background: #fff;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+html.is-loading { overflow: hidden; }
+::selection { background: #cc0000; color: #fff; }
+:focus-visible { outline: 2px solid #cc0000; outline-offset: 4px; }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+.stroke-ink { color: transparent; -webkit-text-stroke: 1.5px #111; }
+.stroke-line { color: transparent; -webkit-text-stroke: 1.5px #e0e0e0; }
+.edge-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
