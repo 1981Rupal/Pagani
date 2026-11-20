@@ -2,15 +2,19 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.repository import CONFIGURATIONS
+from app.repository import CONFIGURATIONS, LOCAL_VERSIONS, LOCAL_PROPOSALS
 
 
 @pytest.fixture(autouse=True)
 def clear_store():
     """Clear in-memory store between tests."""
     CONFIGURATIONS.clear()
+    LOCAL_VERSIONS.clear()
+    LOCAL_PROPOSALS.clear()
     yield
     CONFIGURATIONS.clear()
+    LOCAL_VERSIONS.clear()
+    LOCAL_PROPOSALS.clear()
 
 
 client = TestClient(app)
@@ -24,6 +28,7 @@ def test_health():
     body = r.json()
     assert body["status"] == "ok"
     assert body["service"] == "pagani-ai-atelier"
+    assert "database" in body
 
 
 # ── Vehicle listing ──────────────────────────────────────────────────
@@ -315,4 +320,51 @@ def test_all_themes_pass_validation():
         assert r.status_code == 200
         warnings = r.json()["warnings"]
         assert warnings == [], f"Theme {theme['id']} produced warnings: {warnings}"
+
+
+# ── Design Versions and History ──────────────────────────────────────
+
+def test_configuration_versions():
+    cfg = _create_config()
+    # Initial version 1 exists upon creation
+    r = client.get(f"/api/v1/configurations/{cfg['id']}/versions")
+    assert r.status_code == 200
+    versions = r.json()["versions"]
+    assert len(versions) >= 1
+    assert versions[0]["version_number"] == 1
+
+    # Apply manual customization
+    client.patch(f"/api/v1/configurations/{cfg['id']}", json={
+        "changes": {"exterior.body_color": "pearl_white"}
+    })
+
+    # Version 2 is appended
+    r2 = client.get(f"/api/v1/configurations/{cfg['id']}/versions")
+    versions2 = r2.json()["versions"]
+    assert len(versions2) >= 2
+    assert versions2[-1]["version_number"] == 2
+    assert versions2[-1]["snapshot"]["exterior"]["body_color"] == "pearl_white"
+
+
+def test_configuration_versions_not_found():
+    r = client.get("/api/v1/configurations/nonexistent/versions")
+    assert r.status_code == 404
+
+
+def test_component_isolation_in_patch():
+    """Modifying one vehicle component must never alter unrelated components."""
+    cfg = _create_config()
+    initial_wheels = cfg["wheels"]["finish"]
+    initial_interior = cfg["interior"]["seat_color"]
+
+    # Modify ONLY body color
+    r = client.patch(f"/api/v1/configurations/{cfg['id']}", json={
+        "changes": {"exterior.body_color": "emerald_green"}
+    })
+    assert r.status_code == 200
+    updated = r.json()["configuration"]
+    assert updated["exterior"]["body_color"] == "emerald_green"
+    # Wheels and interior must be completely unchanged
+    assert updated["wheels"]["finish"] == initial_wheels
+    assert updated["interior"]["seat_color"] == initial_interior
 

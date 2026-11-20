@@ -18,6 +18,7 @@ class VehicleConfiguration(BaseModel):
     bespoke: dict[str, str] = Field(default_factory=dict)
     design_personality: Optional[str] = None
     source: str = "manual"
+    ai_provider: Optional[str] = None
     validation_warnings: list[str] = Field(default_factory=list)
 
 class GenerateRequest(BaseModel):
